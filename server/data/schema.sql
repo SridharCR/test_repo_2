@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS `BCG`.`insurance_policies` (
   `property_damage_liability` INT(1) NULL,
   `collision` INT(1) NULL,
   `comprehensive` INT(1) NULL,
-  `insurance_policiescol` VARCHAR(45) NULL,
   PRIMARY KEY (`policy_id`),
   INDEX `policy_customer_fk_idx` (`customer_id` ASC) VISIBLE,
   CONSTRAINT `policy_customer_fk`
