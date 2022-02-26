@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS `BCG`.`customer` (
   `income` INT NULL,
   `region` VARCHAR(45) NULL,
   `marital_status` INT(1) NULL,
-  `customercol` VARCHAR(45) NULL,
   PRIMARY KEY (`customer_id`))
 ENGINE = InnoDB;
 
