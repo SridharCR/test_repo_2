@@ -1,6 +1,6 @@
-CREATE DATABASE `BCG` IF NOT EXISTS;
+CREATE DATABASE `BCG`;
 
-CREATE TABLE IF NOT EXISTS `BCG`.`customer` (
+CREATE TABLE `BCG`.`customer` (
   `customer_id` INT NOT NULL AUTO_INCREMENT,
   `gender` ENUM('M', 'F', 'T') NULL,
   `income` INT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `BCG`.`customer` (
   PRIMARY KEY (`customer_id`))
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `BCG`.`insurance_policies` (
+CREATE TABLE `BCG`.`insurance_policies` (
   `policy_id` INT NOT NULL AUTO_INCREMENT,
   `customer_id` INT NOT NULL,
   `date_of_purchase` DATETIME NULL,
