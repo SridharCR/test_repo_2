@@ -1,6 +1,6 @@
 from flask import Flask
 
-from services.insurance.controller import insurance_blueprint
+from src.services.insurance.controller.controller import insurance_blueprint
 
 
 # Application Factory
