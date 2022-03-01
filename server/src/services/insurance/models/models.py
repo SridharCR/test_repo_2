@@ -11,18 +11,16 @@ class InsuranceModel:
             results = cur.fetchall()
         return results
 
-    def update_policy_data(self, data):
+    def update_policy_data(self, query):
         conn = create_connection('BCG')
-        update_query = "update insurance_policy set Fuel = '123' where index = 1199"
         with conn.cursor() as cur:
-            cur.execute(update_query)
+            cur.execute(*query)
         conn.commit()
         return True
 
-    def update_customer_data(self, data):
+    def update_table_data(self, query):
         conn = create_connection('BCG')
-        update_query = "update customer set Customer_Gender = 'Edachu' where index = 1199"
-        with conn.cursor as cur:
-            cur.execute(update_query)
+        with conn.cursor() as cur:
+            cur.execute(*query)
         conn.commit()
         return True
