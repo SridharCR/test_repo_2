@@ -1,0 +1,16 @@
+.line-chart-container {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.flexbox {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flexitem {
+    flex-basis: calc((100% / 2) - 10px);
+}
+
