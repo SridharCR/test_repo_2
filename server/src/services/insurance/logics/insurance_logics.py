@@ -3,7 +3,7 @@ from src.services.insurance.models.models import InsuranceModel
 
 
 def build_dynamic_where_query(filters):
-    base_select_query = "select * from customer join insurance_policy using (Customer_id)"
+    base_select_query = "select * from customer join insurance_policy using (Customer_id) limit 100"
     base_where_query = " where "
     final_query = None
     build_query = []
