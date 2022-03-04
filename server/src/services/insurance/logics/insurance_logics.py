@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.services.insurance.config.insurance_config import COLUMNS
 from src.services.insurance.models.models import InsuranceModel
 
@@ -42,6 +44,7 @@ def build_dynamic_set_query(table, filters):
 def update_data(post_request_data):
     customer_data = {k: v for k, v in post_request_data.items() if k in COLUMNS['customer'].keys()}
     insurance_data = {k: v for k, v in post_request_data.items() if k in COLUMNS['insurance_policies'].keys()}
+    insurance_data['Date of Purchase'] = datetime.strptime(insurance_data['Date of Purchase'], "%m/%d/%Y")
     customer_query = build_dynamic_set_query('customer', customer_data)
     insurance_query = build_dynamic_set_query('insurance_policy', insurance_data)
     InsuranceModel().update_table_data(customer_query)
