@@ -17,7 +17,7 @@ class InsuranceController(Resource):
         """
         Get insurance policy data
         Request:
-        http://192.168.0.6:5000/api/v1/bcg/insurance?Policy_id=12345
+        http://192.168.0.12:5000/api/v1/bcg/insurance?Policy_id=12345
         Response:
         [
             {
@@ -39,24 +39,28 @@ class InsuranceController(Resource):
             }
         ]
         """
-        try:
-            request_data = request.args.to_dict()
-            validictory.validate(request_data, SCHEMA)
-            page, limit = request_data.pop('page') if request_data.get('page') else 0, request_data.pop(
-                'limit') if request_data.get('limit') else 10
-            query = build_dynamic_where_query(request_data, page, limit)
-            results = InsuranceModel().fetch_policy_and_customer_data(query)
-            results = list(map(dt_to_str, results))
-            print(results)
-            return results
-        except Exception as ex:
-            return {"status": "failure", "exception": str(ex)}
+        # try:
+        request_data = request.args.to_dict()
+        validictory.validate(request_data, SCHEMA)
+        results = {}
+        page, limit = request_data.pop('page') if request_data.get('page') else 10, request_data.pop(
+            'limit') if request_data.get('limit') else 2
+        query = build_dynamic_where_query(request_data, page, limit)
+        count_query = build_dynamic_where_query(request_data, page, limit, True)
+        model_object = InsuranceModel()
+        results['totalcount'] = model_object.fetch_policy_and_customer_data(count_query)
+        results['results'] = model_object.fetch_policy_and_customer_data(query)
+        results['results'] = list(map(dt_to_str, results['results']))
+        print(results)
+        return results
+        # except Exception as ex:
+        #     return {"status": "failure", "exception": str(ex)}
 
     def put(self):
         """
         Update insurance policy data
         Request:
-        http://192.168.0.6:5000/api/v1/bcg/insurance
+        http://192.168.0.12:5000/api/v1/bcg/insurance
         {
                 "Customer_id": 400,
                 "Customer_Gender": "Male",
