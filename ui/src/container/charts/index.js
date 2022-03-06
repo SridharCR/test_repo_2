@@ -1,33 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { DatePicker } from '@atlaskit/datetime-picker';
 import { Label } from '@atlaskit/field-base';
 import './index.css';
-
-const data1 = [
-    {
-        time: 'Jan 2021',
-        count: 4000,
-    },
-    {
-        time: 'Feb 2021',
-        count: 2000,
-    },
-    {
-        time: 'Mar 2021',
-        count: 4000,
-    }
-];
+import axios from 'axios';
 
 
 export const InsuranceLineChart = (props) => {
-    let get_data = props.data
-    let data = get_data?.results
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
     var chartData = {}
     var [chartDataPoints, setChartDataPoints] = useState([]);
 
+    const [data, setData] = useState(null)
+    useEffect(() => {
+      let url = "http://192.168.0.12:5000/api/v1/bcg/insurance"
+      axios.get(url, { params: {page: 0, limit: 100}}).then(res => setData(res.data))
+    }, [])
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const generateDataPoints = () => {

@@ -100,11 +100,6 @@ const styles = theme => ({
 const Dashboard = (props) => {
 
     const { classes } = props
-    const [data, setData] = useState(null)
-    useEffect(() => {
-      let url = "http://192.168.0.12:5000/api/v1/bcg/insurance"
-      axios.get(url).then((res) => {setData(res.data); console.log("call", res.data)})
-    }, [])
 
     return (
       <div className={classes.root}>
@@ -146,13 +141,13 @@ const Dashboard = (props) => {
             Insurance-Time chart
           </Typography>
           <Typography component="div" className={classes.chartContainer}>
-            <InsuranceLineChart data={data}/>
+            <InsuranceLineChart />
           </Typography>
           <Typography variant="h4" gutterBottom component="h2">
             Insurance Policies
           </Typography>
           <div className={classes.tableContainer}>
-            <Insurance data={data}/>
+            <Insurance />
           </div>
         </main>
       </div>

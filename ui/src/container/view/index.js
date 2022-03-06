@@ -1,13 +1,19 @@
-import React, { useMemo } from 'react';
-
+import React, { useMemo, useState, useEffect } from 'react';
+import axios from 'axios'
 import Button from '@atlaskit/button/standard-button';
-
+import Pagination from '@atlaskit/pagination';  
 import DynamicTable from '@atlaskit/dynamic-table';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import InsuranceUpdate from '../update';
 
 import TextField from '@atlaskit/textfield';
 import './index.css'
+
+const NoRecordFound = ({content, img, width = '100%'}) => {
+  return (
+          <p> {content || 'No Records Found'}</p>
+  )
+}
 
 const createHead = (withWidth) => {
   return {
@@ -125,12 +131,41 @@ const createHead = (withWidth) => {
 };
 
 
-export default function Insurance(props) {
-  let get_data = props.data
+export default function Insurance() {
+  const [isLoading, setLoading] = useState(false);
+
+  const [get_data, setData] = useState(null)
   let data = get_data?.results
+
+// 0 - 0 to 10
+// 1 - 11 to 20
+// 2 - 21 to 30
+  
+const handleRefetch = (page = 0, limit = 10, searchValue) => {
+  setLoading(true);
+  var computePage = parseInt(page) * 10
+  var computeLimit = 10
+  var url = "http://192.168.0.12:5000/api/v1/bcg/insurance?page=" + computePage + "&limit=" + computeLimit
+  console.log("url",  url)
+  axios.get(url).then(e => {
+      var _dataListLength = e.data.length
+      setData(e.data)
+      // pagination = ([...Array(Math.ceil(_dataListLength / pageCount))].map((_, index) => index + 1))
+  }).finally(() => {
+      setLoading(false);
+  });
+}
+
+  useEffect(() => {
+    handleRefetch()
+  }, [])
+  let totalRecord = get_data?.totalcount[0].count
+  let pages = [...Array(Math.ceil(totalRecord/10) + 1).keys()]
+  pages.shift()
+  // let pagination;
   const head = useMemo(() => createHead(false));
   var rows;
-
+  console.log("count sridhar", get_data)
   const getRandomString = (length) => {
     var randomChars =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -142,6 +177,8 @@ export default function Insurance(props) {
     }
     return result;
   }
+
+
 
   if (data) {
     rows = data.map((insurance_data, index) => ({
@@ -237,11 +274,18 @@ export default function Insurance(props) {
       <DynamicTable
         head={head}
         rows={rows}
-        rowsPerPage={15}
-        defaultPage={1}
+        isFixedSize={false}
+        emptyView={<NoRecordFound />}
+        isLoading={isLoading}
+        defaultPageSize={1}
         loadingSpinnerSize="large"
         isRankable
       />
+      <div className="pagination-div">
+          <Pagination onChange={async (ev, p) => {
+              handleRefetch(p - 1);
+          }} pages={pages} />
+      </div>
     </div>
   );
 }

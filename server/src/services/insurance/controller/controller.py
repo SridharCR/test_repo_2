@@ -43,8 +43,8 @@ class InsuranceController(Resource):
         request_data = request.args.to_dict()
         validictory.validate(request_data, SCHEMA)
         results = {}
-        page, limit = request_data.pop('page') if request_data.get('page') else 10, request_data.pop(
-            'limit') if request_data.get('limit') else 2
+        page, limit = request_data.pop('page') if request_data.get('page') else 0, request_data.pop(
+            'limit') if request_data.get('limit') else 10
         query = build_dynamic_where_query(request_data, page, limit)
         count_query = build_dynamic_where_query(request_data, page, limit, True)
         model_object = InsuranceModel()
