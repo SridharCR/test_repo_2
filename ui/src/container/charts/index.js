@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { DatePicker } from '@atlaskit/datetime-picker';
 import { Label } from '@atlaskit/field-base';
+import{ monthNames, INSURANCE_URL} from '../../configs/config'
 import './index.css';
 import axios from 'axios';
 
@@ -14,10 +15,8 @@ export const InsuranceLineChart = (props) => {
 
     const [data, setData] = useState(null)
     useEffect(() => {
-      let url = "http://192.168.0.12:5000/api/v1/bcg/insurance"
-      axios.get(url, { params: {page: 0, limit: 100}}).then((res) => {setData(res.data); console.log("api data", res.data)})
+      axios.get(INSURANCE_URL, { params: {page: 0, limit: 100}}).then((res) => {setData(res.data); console.log("api data", res.data)})
     }, [])
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const generateDataPoints = () => {
         var points = []
@@ -58,7 +57,7 @@ export const InsuranceLineChart = (props) => {
 
     return (
         <div className='line-chart-container'>
-            <ResponsiveContainer width='90%' aspect={5.0 / 2.0}>
+            <ResponsiveContainer width='99%' aspect={3}>
                 <LineChart data={chartDataPoints}>
                     <XAxis dataKey="time" />
                     <YAxis dataKey="count" />

@@ -4,7 +4,8 @@ import Button from '@atlaskit/button/standard-button';
 import Pagination from '@atlaskit/pagination';
 import DynamicTable from '@atlaskit/dynamic-table';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
-import InsuranceUpdate from '../update';
+import { tableHeaderUtil, getRandomString, INSURANCE_URL } from '../../configs/config'
+import InsuranceUpdate from '../update'
 
 import TextField from '@atlaskit/textfield';
 import './index.css'
@@ -17,116 +18,7 @@ const NoRecordFound = ({ content, img, width = '100%' }) => {
 
 const createHead = (withWidth) => {
   return {
-    cells: [
-      {
-        key: "Customer_id",
-        content: "Customer ID",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Customer_Gender',
-        content: 'Gender',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Customer_Income group',
-        content: 'Income group',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Customer_Region',
-        content: 'Region',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Customer_Marital_status',
-        content: 'Marital status',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Policy_id',
-        content: 'Policy ID',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Date of Purchase',
-        content: 'Date of purchase',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Fuel',
-        content: 'Fuel',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'VEHICLE_SEGMENT',
-        content: 'Vehicle Segment',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Premium',
-        content: 'Premium',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'bodily injury liability',
-        content: 'Bodily injury liability',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'personal injury protection',
-        content: 'Personal injury protection',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'property damage liability',
-        content: 'Property damage liability',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'collision',
-        content: 'Collision',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'comprehensive',
-        content: 'Comprehensive',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'more',
-        shouldTruncate: true,
-      },
-    ],
+    cells: tableHeaderUtil
   };
 };
 
@@ -135,24 +27,18 @@ export default function Insurance() {
   const [isLoading, setLoading] = useState(false);
 
   const [get_data, setData] = useState(null)
+  const [pagination, setPagination] = useState([0,10])
   let data = get_data?.results
 
-  // 0 - 0 to 10
-  // 1 - 11 to 20
-  // 2 - 21 to 30
-
-  const handleRefetch = (page = 0, limit = 10, searchValue) => {
+  const handleRefetch = (page = 0, limit = 10) => {
     setLoading(true);
     var computePage = parseInt(page) * 10
     var computeLimit = 10
-    var url = "http://192.168.0.12:5000/api/v1/bcg/insurance?page=" + computePage + "&limit=" + computeLimit
+    var url = `${INSURANCE_URL}?page=${computePage}&limit=${computeLimit}`
     console.log("url", url)
-    axios.get(url).then(e => {
-      var _dataListLength = e.data.length
-      setData(e.data)
-      // pagination = ([...Array(Math.ceil(_dataListLength / pageCount))].map((_, index) => index + 1))
-    }).finally(() => {
+    axios.get(url).then(e => { setData(e.data) }).finally(() => {
       setLoading(false);
+      setPagination([page, limit])
     });
   }
 
@@ -168,26 +54,11 @@ export default function Insurance() {
   else {
     pages = [1]
   }
-  // let pagination;
   const head = useMemo(() => createHead(false));
   var rows;
-  console.log("count sridhar", get_data)
-  const getRandomString = (length) => {
-    var randomChars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var result = '';
-    for (var i = 0; i < length; i++) {
-      result += randomChars.charAt(
-        Math.floor(Math.random() * randomChars.length)
-      );
-    }
-    return result;
-  }
-
-
 
   if (data) {
-    rows = data.map((insurance_data, index) => ({
+    rows = data.map((insurance_data) => ({
       key: `row-${getRandomString(5)}-${insurance_data.Policy_id}`,
       cells: [
         {
@@ -252,7 +123,7 @@ export default function Insurance() {
         },
         {
           key: `row-${getRandomString(5)}-${insurance_data.Policy_id}`,
-          content: (<InsuranceUpdate data={insurance_data} handler={handleRefetch}/>)
+          content: (<InsuranceUpdate data={insurance_data} handler={handleRefetch} pagination={pagination}/>)
         }
       ]
 
@@ -260,9 +131,9 @@ export default function Insurance() {
   }
 
   return (
-    <div>
+    <div className='insurance-policies'>
       <div className='search-group'>
-        <div className='search-group-items'>
+        {/* <div className='search-group-items'>
           <DropdownMenu trigger="Search by">
             <DropdownItemGroup>
               <DropdownItem>Customer_id</DropdownItem>
@@ -275,7 +146,7 @@ export default function Insurance() {
         </div>
         <div className='search-group-items'>
           <Button>Search</Button>
-        </div>
+        </div> */}
       </div>
       <DynamicTable
         head={head}

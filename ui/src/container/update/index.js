@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 
 import Button from '@atlaskit/button/standard-button';
 import Textfield from '@atlaskit/textfield';
+import{ INSURANCE_URL} from '../../configs/config'
 
 import EditIcon from '@material-ui/icons/Edit';
 import axios from 'axios';
@@ -34,10 +35,12 @@ export default function InsuranceUpdate(props) {
     const [input_property, setInputProperty] = useState(undefined);
     const [input_collision, setInputCollision] = useState(undefined);
     const [input_comp, setInputComp] = useState(undefined);
+
     const dataValues = {
         Customer_Gender: input_gender, "Customer_Income group": input_income, Customer_Region: input_region, Customer_Marital_status: input_mstatus, "Date of Purchase": input_dop, Fuel: input_fuel,
         VEHICLE_SEGMENT: input_vehicle, Premium: input_premium, "bodily injury liability": input_body, "personal injury protection": input_personal, "property damage liability": input_property, collision: input_collision, comprehensive: input_comp
     };
+
     const onClickMethod = () => {
         updateData()
         closeModal()
@@ -51,7 +54,7 @@ export default function InsuranceUpdate(props) {
             }
         }
         console.log("sridhar update values", valuesToBeUpdated)
-        axios.put("http://192.168.0.12:5000/api/v1/bcg/insurance", valuesToBeUpdated).then((e) => { console.log(e), props.handler() })
+        axios.put(INSURANCE_URL, valuesToBeUpdated).then((e) => { console.log(e), props.handler(props.pagination[0], props.pagination[1]) })
     }
 
     return (
@@ -85,8 +88,6 @@ export default function InsuranceUpdate(props) {
                                 <div className='insurance-label'><label>Property damage liability</label></div><div className='insurance-inputs'><Textfield value={typeof (input_property) === "undefined" ? props.data['property damage liability'] : input_property} onInput={e => setInputProperty(e.target.value)} /></div>
                                 <div className='insurance-label'><label>Collision</label></div><div className='insurance-inputs'><Textfield value={typeof (input_collision) === "undefined" ? props.data['collision'] : input_collision} onInput={e => setInputCollision(e.target.value)} /></div>
                                 <div className='insurance-label'><label>Comprehensive</label></div><div className='insurance-inputs'><Textfield value={typeof (input_comp) === "undefined" ? props.data['comprehensive'] : input_comp} onInput={e => setInputComp(e.target.value)} /></div>
-
-
                             </ModalBody>
                         )}
 

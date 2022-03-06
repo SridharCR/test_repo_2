@@ -143,9 +143,11 @@ const Dashboard = (props) => {
           <Typography component="div" className={classes.chartContainer}>
             <InsuranceLineChart />
           </Typography>
+          <div className='insurance'>
           <Typography variant="h4" gutterBottom component="h2">
             Insurance Policies
           </Typography>
+          </div>
           <div className={classes.tableContainer}>
             <Insurance />
           </div>

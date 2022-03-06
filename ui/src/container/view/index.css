@@ -11,3 +11,8 @@
     display: flex;
     justify-content: center;
 }
+
+.insurance-policies{
+    margin-top: 2%;
+    margin-bottom: 5%;
+}
