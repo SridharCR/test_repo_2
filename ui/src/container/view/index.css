@@ -1,0 +1,10 @@
+.search-group{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 50%;
+}
+
+.search-group-items{
+    flex-basis: calc((100% / 2) - 10px);
+}

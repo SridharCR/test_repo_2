@@ -11,15 +11,17 @@ def dynamic_query_builder(filters):
         arguments.append(v)
     return build_query, arguments
 
-def build_dynamic_where_query(filters, page, limit):
-    base_select_query = "select * from customer join insurance_policy using (Customer_id)"
+def build_dynamic_where_query(filters, page, limit, count=False):
+    select_data = "count(*) as count" if count else "*"
+    limit_content = " limit %s offset %s" % (page, limit) if not count else ""
+    base_select_query = "select " + select_data +  " from customer join insurance_policy using (Customer_id)"
     base_where_query = " where "
     build_query, arguments = dynamic_query_builder(filters)
     if filters:
-        query = base_select_query + base_where_query + " and ".join(build_query) + " limit %s offset %s" % (limit, page)
+        query = base_select_query + base_where_query + " and ".join(build_query) + limit_content
         final_query = (query, filters)
     else:
-        final_query = (base_select_query + "limit %s offset %s" % (page, limit),)
+        final_query = (base_select_query + limit_content,)
     return final_query
 
 

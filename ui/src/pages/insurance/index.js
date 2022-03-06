@@ -1,4 +1,5 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -12,9 +13,7 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
 import { InsuranceLineChart } from '../../container/charts/';
 import Insurance from '../../container/view';
 
@@ -74,15 +73,15 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    width: theme.spacing.unit * 7,
+    width: theme.spacing(7),
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing.unit * 9,
+      width: theme.spacing(9),
     },
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
     height: '100vh',
     overflow: 'auto',
   },
@@ -93,43 +92,34 @@ const styles = theme => ({
     height: 320,
   },
   h5: {
-    marginBottom: theme.spacing.unit * 2,
+    marginBottom: theme.spacing(2),
   },
 
 });
 
-class Dashboard extends React.Component {
-  state = {
-    open: true,
-  };
+const Dashboard = (props) => {
 
-  handleDrawerOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleDrawerClose = () => {
-    this.setState({ open: false });
-  };
-
-  render() {
-
-    const { classes } = this.props;
+    const { classes } = props
+    const [data, setData] = useState(null)
+    useEffect(() => {
+      let url = "http://192.168.0.12:5000/api/v1/bcg/insurance"
+      axios.get(url).then((res) => {setData(res.data); console.log("call", res.data)})
+    }, [])
 
     return (
       <div className={classes.root}>
         <CssBaseline />
         <AppBar
           position="absolute"
-          className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
+          className={classNames(classes.appBar)}
         >
-          <Toolbar disableGutters={!this.state.open} className={classes.toolbar}>
+          <Toolbar className={classes.toolbar}> 
             <IconButton
               color="inherit"
               aria-label="Open drawer"
-              onClick={this.handleDrawerOpen}
               className={classNames(
-                classes.menuButton,
-                this.state.open && classes.menuButtonHidden,
+                classes.menuButton,classes.menuButtonHidden,
+
               )}
             >
               <MenuIcon />
@@ -150,39 +140,24 @@ class Dashboard extends React.Component {
             </IconButton>
           </Toolbar>
         </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-          }}
-          open={this.state.open}
-        >
-          <div className={classes.toolbarIcon}>
-            <IconButton onClick={this.handleDrawerClose}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <Divider />
-          <List>{mainListItems}</List>
-        </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Typography variant="h4" gutterBottom component="h2">
             Insurance-Time chart
           </Typography>
           <Typography component="div" className={classes.chartContainer}>
-            <InsuranceLineChart />
+            <InsuranceLineChart data={data}/>
           </Typography>
           <Typography variant="h4" gutterBottom component="h2">
             Insurance Policies
           </Typography>
           <div className={classes.tableContainer}>
-            <Insurance />
+            <Insurance data={data}/>
           </div>
         </main>
       </div>
     );
-  }
+  
 }
 
 Dashboard.propTypes = {

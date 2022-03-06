@@ -1,10 +1,13 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
+import Button from '@atlaskit/button/standard-button';
 
 import DynamicTable from '@atlaskit/dynamic-table';
+import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import InsuranceUpdate from '../update';
 
-import axios from 'axios';
+import TextField from '@atlaskit/textfield';
+import './index.css'
 
 const createHead = (withWidth) => {
   return {
@@ -122,15 +125,10 @@ const createHead = (withWidth) => {
 };
 
 
-export default function Insurance() {
-  const [data, setData] = useState(null)
-  useEffect(() => {
-    let url = "http://192.168.0.12:5000/api/v1/bcg/insurance"
-    axios.get(url).then(res => setData(res.data))
-  }, [])
-  const caption = 'Insurance Policies - customer wise data';
+export default function Insurance(props) {
+  let get_data = props.data
+  let data = get_data?.results
   const head = useMemo(() => createHead(false));
-  console.log("backend", data)
   var rows;
 
   const getRandomString = (length) => {
@@ -220,6 +218,22 @@ export default function Insurance() {
 
   return (
     <div>
+      <div className='search-group'>
+        <div className='search-group-items'>
+          <DropdownMenu trigger="Search by">
+            <DropdownItemGroup>
+              <DropdownItem>Customer_id</DropdownItem>
+              <DropdownItem>Policy_id</DropdownItem>
+            </DropdownItemGroup>
+          </DropdownMenu>
+        </div>
+        <div className='search-group-items'>
+          <TextField  type='number' aria-label="default text field" />
+        </div>
+        <div className='search-group-items'>
+          <Button>Search</Button>
+        </div>
+      </div>
       <DynamicTable
         head={head}
         rows={rows}

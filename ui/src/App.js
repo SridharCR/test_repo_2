@@ -1,6 +1,6 @@
 import './App.css';
-import Insurance from './container/view';
-import InsuranceLineChart from './container/charts';
+// import Insurance from './container/view';
+// import InsuranceLineChart from './container/charts';
 import Dashboard from './pages/insurance';
 
 function App() {
