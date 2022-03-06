@@ -15,15 +15,16 @@ export const InsuranceLineChart = (props) => {
     const [data, setData] = useState(null)
     useEffect(() => {
       let url = "http://192.168.0.12:5000/api/v1/bcg/insurance"
-      axios.get(url, { params: {page: 0, limit: 100}}).then(res => setData(res.data))
+      axios.get(url, { params: {page: 0, limit: 100}}).then((res) => {setData(res.data); console.log("api data", res.data)})
     }, [])
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const generateDataPoints = () => {
         var points = []
         if (data) {
-            for (var index = 0; index < data.length; index++) {
-                var date = data[index]['Date of Purchase']
+            console.log("test2", data)
+            for (var index = 0; index < data['results'].length; index++) {
+                var date = data['results'][index]['Date of Purchase']
                 if (chartData[date]) {
                     chartData[date] += 1
                 } else {
@@ -33,11 +34,12 @@ export const InsuranceLineChart = (props) => {
         }
         Object.keys(chartData).map((key) => {
             date = new Date(key)
-            var dateKey = date.getDate() + " " + monthNames[date.getMonth()] + " " + date.getFullYear()
+            var dateKey = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`
             points.push({ time: dateKey, count: chartData[key], date: key })
         })
         points.sort((a, b) => (new Date(a.date) > new Date(b.date)) ? 1 : ((new Date(b.date) > new Date(a.date) ? -1 : 0)))
-        // setChartDataPoints(points)
+        console.log("sridhar points", points)
+        setChartDataPoints(points)
     }
     const updateChart = (start, end) => {
         var updatedData = []
@@ -50,7 +52,8 @@ export const InsuranceLineChart = (props) => {
         }
         setChartDataPoints(updatedData)
     }
-    generateDataPoints()
+    useEffect( () => {generateDataPoints()}, [data])
+    
     console.log("update chart sri", chartDataPoints)
 
     return (

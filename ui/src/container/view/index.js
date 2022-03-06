@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import axios from 'axios'
 import Button from '@atlaskit/button/standard-button';
-import Pagination from '@atlaskit/pagination';  
+import Pagination from '@atlaskit/pagination';
 import DynamicTable from '@atlaskit/dynamic-table';
 import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
 import InsuranceUpdate from '../update';
@@ -9,9 +9,9 @@ import InsuranceUpdate from '../update';
 import TextField from '@atlaskit/textfield';
 import './index.css'
 
-const NoRecordFound = ({content, img, width = '100%'}) => {
+const NoRecordFound = ({ content, img, width = '100%' }) => {
   return (
-          <p> {content || 'No Records Found'}</p>
+    <p> {content || 'No Records Found'}</p>
   )
 }
 
@@ -137,31 +137,37 @@ export default function Insurance() {
   const [get_data, setData] = useState(null)
   let data = get_data?.results
 
-// 0 - 0 to 10
-// 1 - 11 to 20
-// 2 - 21 to 30
-  
-const handleRefetch = (page = 0, limit = 10, searchValue) => {
-  setLoading(true);
-  var computePage = parseInt(page) * 10
-  var computeLimit = 10
-  var url = "http://192.168.0.12:5000/api/v1/bcg/insurance?page=" + computePage + "&limit=" + computeLimit
-  console.log("url",  url)
-  axios.get(url).then(e => {
+  // 0 - 0 to 10
+  // 1 - 11 to 20
+  // 2 - 21 to 30
+
+  const handleRefetch = (page = 0, limit = 10, searchValue) => {
+    setLoading(true);
+    var computePage = parseInt(page) * 10
+    var computeLimit = 10
+    var url = "http://192.168.0.12:5000/api/v1/bcg/insurance?page=" + computePage + "&limit=" + computeLimit
+    console.log("url", url)
+    axios.get(url).then(e => {
       var _dataListLength = e.data.length
       setData(e.data)
       // pagination = ([...Array(Math.ceil(_dataListLength / pageCount))].map((_, index) => index + 1))
-  }).finally(() => {
+    }).finally(() => {
       setLoading(false);
-  });
-}
+    });
+  }
 
   useEffect(() => {
     handleRefetch()
   }, [])
   let totalRecord = get_data?.totalcount[0].count
-  let pages = [...Array(Math.ceil(totalRecord/10) + 1).keys()]
-  pages.shift()
+  let pages;
+  if (get_data) {
+    pages = [...Array(Math.ceil(totalRecord / 10) + 1).keys()]
+    pages.shift()
+  }
+  else {
+    pages = [1]
+  }
   // let pagination;
   const head = useMemo(() => createHead(false));
   var rows;
@@ -246,7 +252,7 @@ const handleRefetch = (page = 0, limit = 10, searchValue) => {
         },
         {
           key: `row-${getRandomString(5)}-${insurance_data.Policy_id}`,
-          content: (<InsuranceUpdate data={insurance_data} />)
+          content: (<InsuranceUpdate data={insurance_data} handler={handleRefetch}/>)
         }
       ]
 
@@ -265,7 +271,7 @@ const handleRefetch = (page = 0, limit = 10, searchValue) => {
           </DropdownMenu>
         </div>
         <div className='search-group-items'>
-          <TextField  type='number' aria-label="default text field" />
+          <TextField type='number' aria-label="default text field" />
         </div>
         <div className='search-group-items'>
           <Button>Search</Button>
@@ -282,9 +288,9 @@ const handleRefetch = (page = 0, limit = 10, searchValue) => {
         isRankable
       />
       <div className="pagination-div">
-          <Pagination onChange={async (ev, p) => {
-              handleRefetch(p - 1);
-          }} pages={pages} />
+        <Pagination onChange={async (ev, p) => {
+          handleRefetch(p - 1);
+        }} pages={pages} />
       </div>
     </div>
   );
