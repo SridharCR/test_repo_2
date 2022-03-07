@@ -9,40 +9,23 @@ Here are the UI screenshots of the application.
 1) This is a normalized design with the foriegn key relationship
 ![db design](server/data/eer_diagram.png)
 
-### Frontend UI:
-
-
-### Backend API:
-
-
-
-
-
 ### Features
 1. The insurance line chart gives you the insights of the customer purchasing the insurance over the period of time. The start and end date can be selected, once both are selected, if end date > start date, then the data is parsed and if it had points between the start and end date, the line-charts is rendered with updated points.
-
 Home screen with Line chart showing the count of insurance policies across the time
 ![chart](resources/linechart.png)
 
 2. This shows the records of insurance policies available in the database, which was sourced from the csv file. 
 If the data source is a profound csv, we can schedule a script in cron, to take the new csv and source them into the database.
 Once the data is available in the database, just by hitting a GET API call with required query params, would give us the result.
-
 Details of the insurance policies
 ![table](resources/insurancelist.png)
-
 The backend API is equipped with the search abilities with Customer_id and/or Policy_id along with pagination feature.
-
-
 Get API - To get the insurance data (params - Customer_id/Policy_id)
 ![get api](resources/getapi.png)
 
 3. Insurance Data shown in the table, can be updated just by clicking the edit icon on the last column. By doing that it will open a dailog box, with prefilled text boxes with the actual data. 
-
 ![update](resources/update.png)
-
 Other than Customer_id/Policy_id, other fields are editable. If specific values are updated, they are selected and communicated to backend with the help of PUT API.
-
 Put API - To update the insurance and customer data
 ![put api](resources/putapi.png)
 ### Challenges Faced
