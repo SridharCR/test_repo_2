@@ -41,6 +41,9 @@ export const InsuranceLineChart = (props) => {
         setChartDataPoints(points)
     }
     const updateChart = (start, end) => {
+        generateDataPoints()
+        if (chartDataPoints.length !== 0)
+        {
         var updatedData = []
         if (new Date(end) - new Date(start) > 0) {
             for (var index = 0; index < chartDataPoints.length; index++) {
@@ -50,6 +53,7 @@ export const InsuranceLineChart = (props) => {
             }
         }
         setChartDataPoints(updatedData)
+    }
     }
     useEffect( () => {generateDataPoints()}, [data])
     

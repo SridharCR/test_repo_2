@@ -1,7 +1,7 @@
 import InsuranceUpdate from '../container/update';
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const INSURANCE_URL = "http://192.168.0.12:5000/api/v1/bcg/insurance"
+const INSURANCE_URL = "http://192.168.0.6:5000/api/v1/bcg/insurance"
 
 
 const getRandomString = (length) => {

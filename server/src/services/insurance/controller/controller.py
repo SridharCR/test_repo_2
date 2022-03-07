@@ -17,7 +17,7 @@ class InsuranceController(Resource):
         """
         Get insurance policy data
         Request:
-        http://192.168.0.12:5000/api/v1/bcg/insurance?Policy_id=12345
+        http://192.168.0.6:5000/api/v1/bcg/insurance?Policy_id=12345
         Response:
         [
             {
@@ -60,7 +60,7 @@ class InsuranceController(Resource):
         """
         Update insurance policy data
         Request:
-        http://192.168.0.12:5000/api/v1/bcg/insurance
+        http://192.168.0.6:5000/api/v1/bcg/insurance
         {
                 "Customer_id": 400,
                 "Customer_Gender": "Male",
