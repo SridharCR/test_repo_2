@@ -1,29 +1,33 @@
+from datetime import datetime
+
 from src.services.insurance.config.insurance_config import COLUMNS
 from src.services.insurance.models.models import InsuranceModel
 
-
-def build_dynamic_where_query(filters):
-    base_select_query = "select * from customer join insurance_policy using (Customer_id) limit 100"
-    base_where_query = " where "
-    final_query = None
+def dynamic_query_builder(filters):
     build_query = []
     arguments = []
     for k, v in filters.items():
-        build_query.append(k + " = " + "%(" + k + ")s")
+        build_query.append("`" + k + "` = " + "%(" + k + ")s")
         arguments.append(v)
+    return build_query, arguments
+
+def build_dynamic_where_query(filters, page, limit, count=False):
+    select_data = "count(*) as count" if count else "*"
+    limit_content = " limit %s, %s" % (page, limit) if not count else ""
+    base_select_query = "select " + select_data +  " from customer join insurance_policy using (Customer_id)"
+    base_where_query = " where "
+    build_query, arguments = dynamic_query_builder(filters)
     if filters:
-        final_query = (base_select_query + base_where_query + " and ".join(build_query), filters)
+        query = base_select_query + base_where_query + " and ".join(build_query) + limit_content
+        final_query = (query, filters)
     else:
-        final_query = (base_select_query,)
+        final_query = (base_select_query + limit_content,)
     return final_query
 
 
 def build_dynamic_set_query(table, filters):
     base_update_query = "update %s set " % table
     base_where_query = " where "
-    final_query = None
-    build_query = []
-    arguments = []
     if table == 'customer':
         where = base_where_query + "Customer_id = " + str(filters.pop('Customer_id'))
     elif table == 'insurance_policy':
@@ -31,10 +35,7 @@ def build_dynamic_set_query(table, filters):
         filters.pop('Customer_id')
     else:
         raise Exception("Not configured for other tables")
-    for k, v in filters.items():
-        build_query.append("`" + k + "` = " + "%(" + k + ")s")
-        arguments.append(v)
-
+    build_query, arguments = dynamic_query_builder(filters)
     if filters:
         final_query = (base_update_query + " , ".join(build_query) + where, filters)
     else:
@@ -45,7 +46,16 @@ def build_dynamic_set_query(table, filters):
 def update_data(post_request_data):
     customer_data = {k: v for k, v in post_request_data.items() if k in COLUMNS['customer'].keys()}
     insurance_data = {k: v for k, v in post_request_data.items() if k in COLUMNS['insurance_policies'].keys()}
+    if insurance_data.get('Date of Purchase'):
+        insurance_data['Date of Purchase'] = datetime.strptime(insurance_data['Date of Purchase'], "%m/%d/%Y")
     customer_query = build_dynamic_set_query('customer', customer_data)
     insurance_query = build_dynamic_set_query('insurance_policy', insurance_data)
-    InsuranceModel().update_table_data(customer_query)
-    InsuranceModel().update_table_data(insurance_query)
+    insurance_model_obj = InsuranceModel()
+    if customer_query:
+        insurance_model_obj.update_table_data(customer_query)
+    if insurance_query:
+        insurance_model_obj.update_table_data(insurance_query)
+
+def dt_to_str(x):
+    x['Date of Purchase'] = x['Date of Purchase'].strftime("%m/%d/%Y")
+    return x

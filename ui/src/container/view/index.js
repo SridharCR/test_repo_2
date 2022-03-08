@@ -1,152 +1,64 @@
-import React, { useEffect, useState, useMemo } from 'react';
-
-
+import React, { useMemo, useState, useEffect } from 'react';
+import axios from 'axios'
+import Button from '@atlaskit/button/standard-button';
+import Pagination from '@atlaskit/pagination';
 import DynamicTable from '@atlaskit/dynamic-table';
-import InsuranceUpdate from '../update';
+import DropdownMenu, { DropdownItem, DropdownItemGroup } from '@atlaskit/dropdown-menu';
+import { tableHeaderUtil, getRandomString, INSURANCE_URL } from '../../configs/config'
+import InsuranceUpdate from '../update'
 
-import axios from 'axios';
+import TextField from '@atlaskit/textfield';
+import './index.css'
+
+const NoRecordFound = ({ content, img, width = '100%' }) => {
+  return (
+    <p> {content || 'No Records Found'}</p>
+  )
+}
 
 const createHead = (withWidth) => {
   return {
-    cells: [
-      {
-        key: "Customer_id",
-        content: "Customer ID",
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Customer_Gender',
-        content: 'Gender',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Customer_Income group',
-        content: 'Income group',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Customer_Region',
-        content: 'Region',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Customer_Marital_status',
-        content: 'Marital status',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Policy_id',
-        content: 'Policy ID',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Date of Purchase',
-        content: 'Date of purchase',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Fuel',
-        content: 'Fuel',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'VEHICLE_SEGMENT',
-        content: 'Vehicle Segment',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'Premium',
-        content: 'Premium',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'bodily injury liability',
-        content: 'Bodily injury liability',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'personal injury protection',
-        content: 'Personal injury protection',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'property damage liability',
-        content: 'Property damage liability',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'collision',
-        content: 'Collision',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'comprehensive',
-        content: 'Comprehensive',
-        shouldTruncate: true,
-        isSortable: true,
-        width: withWidth ? 10 : undefined,
-      },
-      {
-        key: 'more',
-        shouldTruncate: true,
-      },
-    ],
+    cells: tableHeaderUtil
   };
 };
 
 
 export default function Insurance() {
-  const [data, setData] = useState(null)
-  useEffect(() => {
-    let url = "http://192.168.0.12:5000/api/v1/bcg/insurance"
-    axios.get(url).then(res => setData(res.data))
-  }, [])
-  const caption = 'Insurance Policies - customer wise data';
-  const head = useMemo(() => createHead(false));
-  console.log("backend", data)
-  var rows;
+  const [isLoading, setLoading] = useState(false);
 
-  const getRandomString = (length) => {
-    var randomChars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var result = '';
-    for (var i = 0; i < length; i++) {
-      result += randomChars.charAt(
-        Math.floor(Math.random() * randomChars.length)
-      );
-    }
-    return result;
+  const [get_data, setData] = useState(null)
+  const [pagination, setPagination] = useState([0,10])
+  let data = get_data?.results
+
+  const handleRefetch = (page = 0, limit = 10) => {
+    setLoading(true);
+    var computePage = parseInt(page) * 10
+    var computeLimit = 10
+    var url = `${INSURANCE_URL}?page=${computePage}&limit=${computeLimit}`
+    console.log("url", url)
+    axios.get(url).then(e => { setData(e.data) }).finally(() => {
+      setLoading(false);
+      setPagination([page, limit])
+    });
   }
 
+  useEffect(() => {
+    handleRefetch()
+  }, [])
+  let totalRecord = get_data?.totalcount[0].count
+  let pages;
+  if (get_data) {
+    pages = [...Array(Math.ceil(totalRecord / 10) + 1).keys()]
+    pages.shift()
+  }
+  else {
+    pages = [1]
+  }
+  const head = useMemo(() => createHead(false));
+  var rows;
+
   if (data) {
-    rows = data.map((insurance_data, index) => ({
+    rows = data.map((insurance_data) => ({
       key: `row-${getRandomString(5)}-${insurance_data.Policy_id}`,
       cells: [
         {
@@ -211,7 +123,7 @@ export default function Insurance() {
         },
         {
           key: `row-${getRandomString(5)}-${insurance_data.Policy_id}`,
-          content: (<InsuranceUpdate data={insurance_data} />)
+          content: (<InsuranceUpdate data={insurance_data} handler={handleRefetch} pagination={pagination}/>)
         }
       ]
 
@@ -219,15 +131,38 @@ export default function Insurance() {
   }
 
   return (
-    <div>
+    <div className='insurance-policies'>
+      <div className='search-group'>
+        {/* <div className='search-group-items'>
+          <DropdownMenu trigger="Search by">
+            <DropdownItemGroup>
+              <DropdownItem>Customer_id</DropdownItem>
+              <DropdownItem>Policy_id</DropdownItem>
+            </DropdownItemGroup>
+          </DropdownMenu>
+        </div>
+        <div className='search-group-items'>
+          <TextField type='number' aria-label="default text field" />
+        </div>
+        <div className='search-group-items'>
+          <Button>Search</Button>
+        </div> */}
+      </div>
       <DynamicTable
         head={head}
         rows={rows}
-        rowsPerPage={15}
-        defaultPage={1}
+        isFixedSize={false}
+        emptyView={<NoRecordFound />}
+        isLoading={isLoading}
+        defaultPageSize={1}
         loadingSpinnerSize="large"
         isRankable
       />
+      <div className="pagination-div">
+        <Pagination onChange={async (ev, p) => {
+          handleRefetch(p - 1);
+        }} pages={pages} />
+      </div>
     </div>
   );
 }

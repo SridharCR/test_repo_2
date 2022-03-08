@@ -20,9 +20,10 @@ class DataAdaptor:
         data = data.rename(columns=lambda x: x.strip())
         customer_data = data[COLUMNS['customer'].keys()].copy()
         insurance_data = data[COLUMNS['insurance_policies'].keys()].copy()
+        insurance_data['Date of Purchase'] = pd.to_datetime(insurance_data['Date of Purchase'], format="%m/%d/%Y")
         # customer_data = customer_data.astype({'Customer_id': int})
-        customer_data.to_sql(con=con, name='customer', if_exists='append', index=False)
-        insurance_data.to_sql(con=con, name='insurance_policy', if_exists='append', index=False)
+        customer_data.to_sql(con=con, name='customer', if_exists='append', dtype=COLUMNS['customer'])
+        insurance_data.to_sql(con=con, name='insurance_policy', if_exists='append', dtype=COLUMNS['insurance_policies'])
 
 
 if __name__ == "__main__":

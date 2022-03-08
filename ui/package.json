@@ -6,11 +6,12 @@
     "@atlaskit/avatar": "^20.5.5",
     "@atlaskit/button": "^16.1.6",
     "@atlaskit/datetime-picker": "^11.1.5",
-    "@atlaskit/dropdown-menu": "^11.1.0",
+    "@atlaskit/dropdown-menu": "^11.1.1",
     "@atlaskit/dynamic-table": "^14.5.0",
     "@atlaskit/field-base": "^15.0.6",
     "@atlaskit/form": "^8.5.0",
     "@atlaskit/modal-dialog": "^12.2.3",
+    "@atlaskit/pagination": "^14.1.4",
     "@atlaskit/textfield": "^5.1.6",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
@@ -28,7 +29,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "eslintConfig": {
     "extends": [
@@ -47,5 +50,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^8.10.0",
+    "eslint-plugin-react": "^7.29.3"
   }
 }

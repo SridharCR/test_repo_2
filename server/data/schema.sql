@@ -1,32 +1,33 @@
-CREATE DATABASE `BCG`;
+CREATE DATABASE IF NOT EXISTS `BCG`;
 
-CREATE TABLE `BCG`.`customer` (
-  `customer_id` INT NOT NULL AUTO_INCREMENT,
-  `gender` ENUM('M', 'F', 'T') NULL,
-  `income` INT NULL,
-  `region` VARCHAR(45) NULL,
-  `marital_status` INT(1) NULL,
-  PRIMARY KEY (`customer_id`))
-ENGINE = InnoDB;
+CREATE TABLE `customer` (
+   `index` int NOT NULL,
+  `Customer_id` int  NOT NULL,
+  `Customer_Gender` varchar(20)  NOT NULL,
+  `Customer_Income group` varchar(20)  NOT NULL,
+  `Customer_Region` varchar(100)  NOT NULL,
+  `Customer_Marital_status` int  NOT NULL,
+  PRIMARY KEY (`index`)
+) ENGINE=InnoDB;
 
-CREATE TABLE `BCG`.`insurance_policies` (
-  `policy_id` INT NOT NULL AUTO_INCREMENT,
-  `customer_id` INT NOT NULL,
-  `date_of_purchase` DATETIME NULL,
-  `vehicle_segment` VARCHAR(1) NULL,
-  `fuel` VARCHAR(5) NULL,
-  `premium` INT(10) NULL,
-  `bodily_injury_liability` INT(1) NULL,
-  `personal_injury_protection` INT(1) NULL,
-  `property_damage_liability` INT(1) NULL,
-  `collision` INT(1) NULL,
-  `comprehensive` INT(1) NULL,
-  PRIMARY KEY (`policy_id`),
-  INDEX `policy_customer_fk_idx` (`customer_id` ASC) VISIBLE,
-  CONSTRAINT `policy_customer_fk`
-    FOREIGN KEY (`customer_id`)
-    REFERENCES `BCG`.`customer` (`customer_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE `insurance_policy` (
+   `index` int NOT NULL,
+  `Policy_id` int NOT NULL,
+  `Customer_id` int NOT NULL,
+  `Date of Purchase` datetime NOT NULL,
+  `Fuel` varchar(10)NOT NULL,
+  `VEHICLE_SEGMENT` varchar(5)NOT NULL,
+  `Premium` int NOT NULL,
+  `bodily injury liability` smallint NOT NULL,
+  `personal injury protection` smallint NOT NULL,
+  `property damage liability` smallint NOT NULL,
+  `collision` smallint NOT NULL,
+  `comprehensive` smallint NOT NULL,
+    PRIMARY KEY (`index`)
+--      INDEX `policy_customer_fk_idx` (`Customer_id` ASC) VISIBLE,
+--  CONSTRAINT `policy_customer_fk`
+--    FOREIGN KEY (`Customer_id`)
+--    REFERENCES `BCG`.`customer` (`Customer_id`)
+--    ON DELETE NO ACTION
+--    ON UPDATE NO ACTION
+) ENGINE=InnoDB  CHARSET=utf8;

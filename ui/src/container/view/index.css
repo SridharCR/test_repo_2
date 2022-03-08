@@ -1,0 +1,18 @@
+.search-group{
+    display: flex;
+    justify-content: center;
+}
+
+.search-group-items{
+    flex-basis: 30%;
+}
+
+.pagination-div{
+    display: flex;
+    justify-content: center;
+}
+
+.insurance-policies{
+    margin-top: 2%;
+    margin-bottom: 5%;
+}
